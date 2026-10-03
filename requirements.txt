@@ -3,3 +3,5 @@ pypdf
 google-genai
 python-dotenv
 requests
+groq
+pandas
