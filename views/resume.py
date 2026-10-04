@@ -3,6 +3,7 @@ import streamlit as st
 from database.db import (
     get_candidate_profile,
     save_candidate_profile,
+    reset_candidate_profile,
 )
 
 from services.resume_parser import extract_resume_text
@@ -182,6 +183,46 @@ def show_resume():
     )
 
     st.divider()
+
+    # ========================================================
+    # RESET RESUME
+    # ========================================================
+
+    if get_candidate_profile():
+        with st.expander("Resume Reset Options"):
+            st.warning(
+                "This will permanently clear your saved "
+                "resume, extracted text, and AI profile."
+            )
+
+            confirm_reset = st.checkbox(
+                "I understand and want to reset my resume.",
+                key="confirm_resume_reset",
+            )
+
+            if st.button(
+                "Reset Resume",
+                type="secondary",
+                disabled=not confirm_reset,
+                key="reset_resume_button",
+            ):
+                try:
+                    reset_candidate_profile()
+
+                    for key in (
+                        "resume_profile",
+                        "resume_text",
+                        "resume_filename",
+                        "confirm_resume_reset",
+                        "resume_uploader",
+                    ):
+                        st.session_state.pop(key, None)
+
+                    st.success("Resume profile reset successfully.")
+                    st.rerun()
+
+                except Exception as exc:
+                    st.error(f"Could not reset resume: {exc}")
 
     # ========================================================
     # LOAD EXISTING PROFILE

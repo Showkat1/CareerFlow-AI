@@ -120,6 +120,18 @@ def save_candidate_profile(resume_filename, resume_text, profile):
 
 
 def get_candidate_profile():
+
+def reset_candidate_profile():
+    """Delete the saved resume and candidate profile only."""
+    connection = get_connection()
+    try:
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM candidate_profile")
+        connection.commit()
+        return cursor.rowcount
+    finally:
+        connection.close()
+
     connection = get_connection()
     cursor = connection.cursor()
 
